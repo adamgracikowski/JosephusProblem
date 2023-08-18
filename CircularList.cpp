@@ -125,3 +125,73 @@ CircularList& CircularList::operator=(CircularList&& other)
 	}
 	return *this;
 }
+
+void CircularList::push_back(const value_type& val)
+{
+	Node* newNode = new Node(val);
+
+	if (empty()) {
+		head = tail = newNode;
+		newNode->next = newNode->prev = newNode;
+	}
+	else {
+		tail->next = newNode;
+		newNode->prev = tail;
+		head->prev = newNode;
+		newNode->next = head;
+		tail = tail->next;
+	}
+	incrementSize();
+}
+
+void CircularList::pop_back()
+{
+	if (empty()) return;
+	if (size() == 1) {
+		delete tail;
+		reset();
+	}
+	else {
+		Node* toPop = tail;
+		tail = tail->prev;
+		tail->next = head;
+		head->prev = tail;
+		delete toPop;
+		decrementSize();
+	}
+}
+
+void CircularList::push_front(const value_type& val)
+{
+	Node* newNode = new Node(val);
+
+	if (empty()) {
+		head = tail = newNode;
+		newNode->next = newNode->prev = newNode;
+	}
+	else {
+		head->prev = newNode;
+		newNode->next = head;
+		tail->next = newNode;
+		newNode->prev = tail;
+		head = head->prev;
+	}
+	incrementSize();
+}
+
+void CircularList::pop_front()
+{
+	if (empty()) return;
+	if (size() == 1) {
+		delete head;
+		reset();
+	}
+	else {
+		Node* toPop = head;
+		head = head->next;
+		head->prev = tail;
+		tail->next = head;
+		delete toPop;
+		decrementSize();
+	}
+}

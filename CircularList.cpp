@@ -346,3 +346,137 @@ CircularList CircularList::operator+=(const CircularList& other)
 {
 	return *this = *this + other;
 }
+
+void CircularList::clear()
+{
+	if (size() > 0)
+	{
+		while (head != tail) {
+			head = head->next;
+			delete head->prev;
+		}
+		delete head;
+		reset();
+	}
+}
+
+size_t CircularList::size() const
+{
+	return n;
+}
+
+void CircularList::incrementSize()
+{
+	n++;
+}
+
+void CircularList::decrementSize()
+{
+	n--;
+}
+
+bool CircularList::empty() const
+{
+	return size() == 0;
+}
+
+CircularList::reference CircularList::front()
+{
+	return *head->data;
+}
+
+CircularList::const_reference CircularList::front() const
+{
+	return *head->data;
+}
+
+CircularList::reference CircularList::back()
+{
+	return *tail->data;
+}
+
+CircularList::const_reference CircularList::back() const
+{
+	return *tail->data;
+}
+
+bool CircularList::pushFromFile(string filename)
+{
+	ifstream file(filename);
+	if (!file) return false;
+	CircularList toPushList{};
+	value_type val{};
+	while (file >> val) {
+		toPushList.push_back(val);
+	}
+	if (!file.eof()) {
+		file.close();
+		return false;
+	}
+	*this += toPushList;
+	file.close();
+	return true;
+}
+
+void CircularList::generateN(size_t n, function<value_type(void)> generator)
+{
+	while (n--) {
+		push_back(generator());
+	}
+}
+
+void CircularList::reverse()
+{
+	Node* headCopy{ head }, * tailCopy{ tail };
+	size_t middle{ size_t(size() / 2) };
+	for (size_t i = 0; i < middle; ++i)
+	{
+		swap(headCopy->data, tailCopy->data);
+		headCopy = headCopy->next;
+		tailCopy = tailCopy->prev;
+	}
+}
+
+void CircularList::sort(std::function<void(CircularList&)> sortingFunction)
+{
+	sortingFunction(*this);
+}
+
+ostream& CircularList::print(ostream& os, string delimeter) const
+{
+	if (empty()) {
+		os << "EMPTY";
+	}
+	else {
+		Node* tmpNode{ head };
+		while (tmpNode != tail) {
+			os << *tmpNode->data << delimeter;
+			tmpNode = tmpNode->next;
+		}
+		os << *tmpNode->data;
+	}
+	return os;
+}
+
+void CircularList::reset()
+{
+	head = tail = nullptr;
+	n = 0;
+}
+
+void bubbleSort(CircularList& cl)
+{
+	if (cl.size() < 2) return;
+	for (Node* i{ cl.head }, * t{ cl.tail }; i != cl.tail; i = i->next) {
+		for (Node* j{ cl.head }; j != t; j = j->next) {
+			if (*j->data > *j->next->data)
+				swap(j->data, j->next->data);
+		}
+		t->prev;
+	}
+}
+
+
+
+
+

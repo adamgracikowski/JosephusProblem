@@ -195,3 +195,44 @@ void CircularList::pop_front()
 		decrementSize();
 	}
 }
+void CircularList::insertAfter(size_t position, size_t howMany, const value_type& val)
+{
+	if (position >= size()) {
+		push_back(val);
+		return;
+	}
+	Node* headCopy{ head };
+	while (position--) {
+		headCopy = headCopy->next;
+	}
+	Node* toInsert{};
+	while (howMany--) {
+		toInsert = new Node(val);
+		headCopy->next->prev = toInsert;
+		toInsert->next = headCopy->next;
+		toInsert->prev = headCopy;
+		headCopy->next = toInsert;
+		incrementSize();
+		headCopy = toInsert;
+	}
+}
+
+void CircularList::insertSorted(const value_type& val)
+{
+	if (empty() || val < *head->data) {
+		push_front(val);
+	}
+	else if (*tail->data < val) {
+		push_back(val);
+	}
+	else {
+		Node* toInsert{ new Node(val) };
+		Node* greaterNode{ head };
+		while (*greaterNode->data < val) greaterNode = greaterNode->next;
+		toInsert->prev = greaterNode->prev;
+		toInsert->next = greaterNode;
+		toInsert->prev->next = toInsert;
+		greaterNode->prev = toInsert;
+		incrementSize();
+	}
+}

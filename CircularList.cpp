@@ -236,3 +236,69 @@ void CircularList::insertSorted(const value_type& val)
 		incrementSize();
 	}
 }
+
+void CircularList::remove(const value_type& val)
+{
+	Node* headCopy{ head };
+	if (empty()) return;
+	while (headCopy != tail) {
+		if (*headCopy->data == val) {
+			// private overloaded version of remove method
+			headCopy = remove(headCopy);
+		}
+		else headCopy = headCopy->next;
+	}
+	if (*tail->data == val) pop_back();
+}
+
+void CircularList::remove_if(std::function<bool(const value_type& val)> pred)
+{
+	Node* headCopy{ head };
+	if (empty()) return;
+	while (headCopy != tail) {
+		if (pred(*headCopy->data)) {
+			// private overloaded version of remove method
+			headCopy = remove(headCopy);
+		}
+		else headCopy = headCopy->next;
+	}
+	if (pred(*headCopy->data)) pop_back();
+}
+
+void CircularList::removeEveryNUntilMRemains(size_t n, size_t m)
+{
+	if (size() <= m) return;
+
+	size_t counter{ 1 };
+	Node* headCopy{ head };
+
+	while (size() != m) {
+		if (counter % n == 0) {
+			counter = 1;
+			headCopy = remove(headCopy);
+		}
+		else {
+			counter++;
+			headCopy = headCopy->next;
+		}
+	}
+}
+
+Node* CircularList::remove(Node* toRemove)
+{
+	if (empty()) return nullptr;
+	if (toRemove == head) {
+		pop_front();
+		return head;
+	}
+	if (toRemove == tail) {
+		pop_back();
+		return head;
+	}
+	Node* nextNode{ toRemove->next };
+	toRemove->prev->next = toRemove->next;
+	toRemove->next->prev = toRemove->prev;
+	decrementSize();
+	delete toRemove;
+	return nextNode;
+}

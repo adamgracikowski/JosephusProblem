@@ -302,3 +302,47 @@ Node* CircularList::remove(Node* toRemove)
 	delete toRemove;
 	return nextNode;
 }
+
+bool operator==(const CircularList& lhs, const CircularList& rhs)
+{
+	if (lhs.size() != rhs.size()) return false;
+	if (lhs.empty() || rhs.empty()) return true;
+
+	Node* lhsHeadCopy{ lhs.head }, * rhsHeadCopy{ rhs.head };
+	while (lhsHeadCopy != lhs.tail && rhsHeadCopy != rhs.tail) {
+		if (*lhsHeadCopy->data != *rhsHeadCopy->data) return false;
+		lhsHeadCopy = lhsHeadCopy->next;
+		rhsHeadCopy = rhsHeadCopy->next;
+	}
+	if (*lhsHeadCopy->data != *rhsHeadCopy->data) return false;
+	return true;
+}
+
+bool operator!=(const CircularList& lhs, const CircularList& rhs)
+{
+	return !(lhs == rhs);
+}
+
+CircularList operator+(const CircularList& lhs, const CircularList& rhs)
+{
+	CircularList sum(lhs);
+	if (rhs.empty()) return sum;
+
+	Node* rhsHeadCopy{ rhs.head };
+	while (rhsHeadCopy != rhs.tail) {
+		sum.push_back(*rhsHeadCopy->data);
+		rhsHeadCopy = rhsHeadCopy->next;
+	}
+	sum.push_back(*rhsHeadCopy->data);
+	return sum;
+}
+
+std::ostream& operator<<(std::ostream& os, const CircularList& cl)
+{
+	return cl.print(os);
+}
+
+CircularList CircularList::operator+=(const CircularList& other)
+{
+	return *this = *this + other;
+}

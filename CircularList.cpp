@@ -96,3 +96,32 @@ CircularList::~CircularList()
 {
 	clear();
 }
+
+CircularList& CircularList::operator=(const CircularList& other)
+{
+	if (this != &other) {
+		clear();
+		if (other.size() > 0)
+		{
+			Node* tmpNode{ other.head };
+			while (tmpNode != other.tail) {
+				push_back(*tmpNode->data);
+				tmpNode = tmpNode->next;
+			}
+			push_back(*tmpNode->data);
+		}
+	}
+	return *this;
+}
+
+CircularList& CircularList::operator=(CircularList&& other)
+{
+	if (this != &other) {
+		clear();
+		head = other.head;
+		tail = other.tail;
+		n = other.n;
+		other.reset();
+	}
+	return *this;
+}

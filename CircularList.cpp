@@ -1,4 +1,5 @@
 #include "CircularList.h"
+#include <fstream>
 
 using namespace std;
 
@@ -52,3 +53,46 @@ void Node::reset()
 	next = prev = nullptr;
 }
 
+CircularList::CircularList()
+	: head{ nullptr }, tail{ nullptr }, n{ 0 } {}
+
+CircularList::CircularList(size_t n, const value_type& val)
+	: CircularList()
+{
+	while (n--) {
+		push_back(val);
+	}
+}
+
+CircularList::CircularList(const CircularList& other)
+	: CircularList()
+{
+	if (other.size() > 0)
+	{
+		Node* tmpNode{ other.head };
+		while (tmpNode != other.tail) {
+			push_back(*tmpNode->data);
+			tmpNode = tmpNode->next;
+		}
+		push_back(*tmpNode->data);
+	}
+}
+
+CircularList::CircularList(CircularList&& other)
+	: head{ other.head }, tail{ other.tail }, n{ other.n }
+{
+	other.reset();
+}
+
+CircularList::CircularList(std::initializer_list<value_type> il)
+	: CircularList()
+{
+	for (const auto& element : il) {
+		push_back(element);
+	}
+}
+
+CircularList::~CircularList()
+{
+	clear();
+}

@@ -92,3 +92,40 @@ private:
 	Node* tail;
 	size_t n;
 };
+
+template<class InputIterator>
+inline CircularList::CircularList(InputIterator first, InputIterator last)
+{
+	for (InputIterator it{ first }; it != last; ++it) {
+		push_back(*it);
+	}
+}
+
+template<class InputIterator>
+inline void CircularList::insertAfter(size_t position, InputIterator first, InputIterator last)
+{
+	Node* headCopy{ head };
+
+	if (position >= size()) {
+		while (first != last) {
+			push_back(*first);
+			++first;
+		}
+		return;
+	}
+	while (position--) {
+		headCopy = headCopy->next;
+	}
+	Node* toInsert{};
+	while (first != last) {
+		toInsert = new Node(*first);
+		headCopy->next->prev = toInsert;
+		toInsert->next = headCopy->next;
+		toInsert->prev = headCopy;
+		headCopy->next = toInsert;
+		incrementSize();
+
+		headCopy = toInsert;
+		++first;
+	}
+}

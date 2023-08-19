@@ -29,6 +29,8 @@ public:
 	using value_type = T;
 	using reference = T&;
 	using const_reference = const T&;
+	using pointer = T*;
+	using const_pointer = const T*;
 
 	CircularList();
 	CircularList(size_t n, const value_type& val = value_type{});

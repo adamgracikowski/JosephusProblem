@@ -1,0 +1,7 @@
+The Josephus Problem:
+Initial parameters:
+Number of soldiers: 41
+Number of survivors: 1
+Execution step: 2
+Survivors:
+19 Joseph

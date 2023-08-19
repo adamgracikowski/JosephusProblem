@@ -1,12 +1,14 @@
 #pragma once
+#include "CircularList.h"
+
 #include <exception>
 #include <sstream>
 #include <fstream>
 
-#include "CircularList.h"
-#include "Soldier.h"
+//--------------------------------------------
 
-class FileException : std::exception {
+class FileException : std::exception
+{
 public:
 	explicit FileException(std::string msg) : std::exception(), msg{ msg } {}
 	virtual const char* what() const noexcept { return msg.c_str(); }
@@ -14,29 +16,53 @@ private:
 	std::string msg;
 };
 
-CircularList solveJosephusProblem(size_t numberOfSoldiers = 41, size_t numberOfSurvivors = 1, size_t executionStep = 2)
+//--------------------------------------------
+
+template<typename T>
+class JosephusProblemSolver
 {
-	CircularList soldiers{};
-	soldiers.generateN(numberOfSoldiers, [n = 1]() mutable { return n++; });
-	soldiers.removeEveryNUntilMRemains(executionStep, numberOfSurvivors);
-	return soldiers;
+public:
+	JosephusProblemSolver() = default;
+
+	CircularList<T> operator()(size_t numberOfSoldiers = 41,
+		size_t numberOfSurvivors = 1,
+		size_t executionStep = 2) const;
+	CircularList<T> operator()(std::string filename,
+		size_t numberOfSurvivors = 1,
+		size_t executionStep = 2) const;
+};
+
+//--------------------------------------------
+
+template<typename T>
+CircularList<T> JosephusProblemSolver<T>::operator()(size_t numberOfSoldiers,
+	size_t numberOfSurvivors,
+	size_t executionStep) const
+{
+	CircularList<T> cl{};
+	cl.generateN(numberOfSoldiers, [n = 1]() mutable { return n++; });
+	cl.removeEveryNUntilMRemains(executionStep, numberOfSurvivors);
+	return cl;
 }
 
-void solveJosephusProblem(std::string filename, size_t numberOfSurvivors = 1, size_t executionStep = 2)
+template<typename T>
+CircularList<T> JosephusProblemSolver<T>::operator()(std::string filename,
+	size_t numberOfSurvivors,
+	size_t executionStep) const
 {
-	CircularList soldiers{};
+	CircularList<T> cl{};
 	size_t numberOfSoldiers{};
-	if (soldiers.pushFromFile(filename)) {
-		numberOfSoldiers = soldiers.size();
-		soldiers = solveJosephusProblem(numberOfSoldiers, numberOfSurvivors, executionStep);
+	if (cl.pushFromFile(filename)) {
+		numberOfSoldiers = cl.size();
+		cl.removeEveryNUntilMRemains(executionStep, numberOfSurvivors);
 	}
 	else {
 		std::stringstream msg;
 		msg << "File Exception: " << filename << " does not exist or invalid format.";
 		throw FileException(msg.str());
 	}
-
 	std::stringstream outputFilename{};
+
 	outputFilename << "solution_" << filename;
 	std::ofstream outputFile(outputFilename.str(), std::ios::out | std::ios::trunc);
 
@@ -51,8 +77,9 @@ void solveJosephusProblem(std::string filename, size_t numberOfSurvivors = 1, si
 		<< "Initial parameters:" << std::endl
 		<< "Number of soldiers: " << numberOfSoldiers << std::endl
 		<< "Number of survivors: " << numberOfSurvivors << std::endl
-		<< "Survivors:" << std::endl
-		<< soldiers;
+		<< "Execution step: " << executionStep << std::endl;
+	<< "Survivors:" << std::endl;
+	cl.print(headline, "\n");
 
 	if (!(outputFile << headline.str())) {
 		outputFile.close();
@@ -63,4 +90,6 @@ void solveJosephusProblem(std::string filename, size_t numberOfSurvivors = 1, si
 	else {
 		outputFile.close();
 	}
+	return cl;
 }
+//--------------------------------------------

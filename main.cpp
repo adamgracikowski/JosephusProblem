@@ -8,6 +8,14 @@ using namespace std;
 
 int main() {
 
+	try {
+		//solveJosephusProblem("soldiers.txt", 1, 2);
+		solveJosephusProblem("numbers.txt", 15, 9);
+	}
+	catch (const FileException& e) {
+		e.what();
+	}
+
 	/* Circular List exemplary usage: */
 
 #if 0 // Constructors & Assignment operators & Generating values

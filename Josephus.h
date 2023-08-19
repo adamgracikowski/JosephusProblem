@@ -77,8 +77,8 @@ CircularList<T> JosephusProblemSolver<T>::operator()(std::string filename,
 		<< "Initial parameters:" << std::endl
 		<< "Number of soldiers: " << numberOfSoldiers << std::endl
 		<< "Number of survivors: " << numberOfSurvivors << std::endl
-		<< "Execution step: " << executionStep << std::endl;
-	<< "Survivors:" << std::endl;
+		<< "Execution step: " << executionStep << std::endl
+		<< "Survivors:" << std::endl;
 	cl.print(headline, "\n");
 
 	if (!(outputFile << headline.str())) {
